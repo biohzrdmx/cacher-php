@@ -5,18 +5,56 @@ A simple, general-purpose, file-based cache provider
 
 ### Basic usage
 
-	// You'll need a folder named 'cache' on the same folder of this file with write permissions
-	$stuff = Cacher::getFromCache('stuff', 900);
-	if (! $stuff ) {
-		$stuff = performTimeConsumingTaskToRetrieveTheStuff();
-		Cacher::saveToCache('stuff', $stuff);
-	}
+First require `biohzrdmx/cacher-php` with Composer.
+
+Now create a `Cacher` instance passing the cache directory and optionally, the caching time:
+
+```php
+$cacher = new Cacher(dirname(__FILE__) . '/cache');
+```
+
+Once you've created the instance you may start manipulating the cache items, for example, by adding a new item:
+
+```php
+$cacher->store('results', $results);
+```
+
+The next time you need to use the `results` data, just recover them from the cache. The first thing to do is check if it exists and if it's still fresh:
+
+```php
+$cacher->isCached('results');
+```
+
+The `isCached` method will return `true` if the data is in the cache and is fresh enough. Once you've checked it, recover its contents:
+
+```php
+$results = $cacher->retrieve('results');
+```
+
+And that's it. Easy peasy.
+
+Usually all those operations are executed in the following form:
+
+```php
+$cacher = new Cacher(BASE_DIR . '/cache');
+
+if ( $cacher->isCached('results') ) {
+	$results = $cacher->retrieve('results');
+} else {
+	$results = fetchResultsFromSomeSource();
+	$cacher->store('results', $results);
+}
+```
+
+You may also specify a serialize and unserialize callback with the `setSerializer($serializer)` and `setUnserializer($unserializer)` methods.
+
+Finally if you want to delete a cached item you may do so with the `delete($name)` function.
 
 ###Licensing
 
 This software is released under the MIT license.
 
-Copyright © 2015 biohzrdmx
+Copyright © 2021 biohzrdmx
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
