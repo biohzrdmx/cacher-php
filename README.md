@@ -36,13 +36,15 @@ And that's it. Easy peasy.
 Usually all those operations are executed in the following form:
 
 ```php
+use Cacher\Cacher;
+
 $cacher = new Cacher(BASE_DIR . '/cache');
 
 if ( $cacher->isCached('results') ) {
-	$results = $cacher->retrieve('results');
+  $results = $cacher->retrieve('results');
 } else {
-	$results = fetchResultsFromSomeSource();
-	$cacher->store('results', $results);
+  $results = fetchResultsFromSomeSource();
+  $cacher->store('results', $results);
 }
 ```
 
